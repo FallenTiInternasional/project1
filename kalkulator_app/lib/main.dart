@@ -1,180 +1,176 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(const CalculatorApp());
 
-class MyApp extends StatelessWidget {
+class CalculatorApp extends StatelessWidget {
+  const CalculatorApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Notification',
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: NotificationPage(),
+    return const MaterialApp(
+      home: Calculator(),
     );
   }
 }
 
-class NotificationPage extends StatelessWidget {
+class Calculator extends StatefulWidget {
+  const Calculator({super.key});
+
+  @override
+  _CalculatorState createState() => _CalculatorState();
+}
+
+class _CalculatorState extends State<Calculator> {
+  String _output = "";
+  String _currentNumber = "";
+  double _num1 = 0;
+  String _operator = "";
+  bool _operatorSelected = false;
+
+  void _buttonPressed(String buttonText) {
+    setState(() {
+      if (buttonText == "C") {
+        _output = "";
+        _currentNumber = "";
+        _num1 = 0;
+        _operator = "";
+        _operatorSelected = false;
+      } else if (buttonText == "+" ||
+          buttonText == "-" ||
+          buttonText == "x" ||
+          buttonText == "/") {
+        if (_operatorSelected) {
+          double num2 = double.parse(_currentNumber);
+          double result = _performOperation(_num1, num2, _operator);
+          _num1 = result;
+          _currentNumber = result.toString();
+        } else {
+          _num1 = double.parse(_currentNumber);
+          _currentNumber = "";
+        }
+        _operator = buttonText;
+        _operatorSelected = true;
+      } else if (buttonText == "=") {
+        if (_operatorSelected) {
+          double num2 = double.parse(_currentNumber);
+          double result = _performOperation(_num1, num2, _operator);
+          _output = result.toString();
+          _operatorSelected = false;
+        }
+      } else {
+        _currentNumber += buttonText;
+      }
+    });
+  }
+
+  double _performOperation(double num1, double num2, String operator) {
+    switch (operator) {
+      case "+":
+        return num1 + num2;
+      case "-":
+        return num1 - num2;
+      case "x":
+        return num1 * num2;
+      case "/":
+        return num1 / num2;
+      default:
+        return num2;
+    }
+  }
+
+  Widget _buildButton(
+      String buttonText, double buttonHeight, Color buttonColor) {
+    return Expanded(
+      child: ElevatedButton(
+        onPressed: () => _buttonPressed(buttonText),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: buttonColor,
+          minimumSize: Size(double.infinity, buttonHeight),
+        ),
+        child: Text(
+          buttonText,
+          style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
+        title: const Text('Kalkulator'),
+      ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
             child: Text(
-          'Notification',
-          style: TextStyle(color: Colors.white, fontSize: 15),
-        )),
-      ),
-      body: ListView(
-        children: [
-          notification(context),
-          notification2(context),
-          notification3(context),
-          markAllRead(context),
-        ],
-      ),
-    );
-  }
-
-  Widget notification(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        print('Notification tapped');
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            Image.network(
-              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMGKi7dsOFfRKHPK1VszvimlHOSSmNBFRuew&usqp=CAU',
-              width: 50,
-              height: 50,
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Siap Siap !',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    'Makanan Kamu Sudah Sampai !',
-                    style: TextStyle(fontSize: 13),
-                  ),
-                  Text(
-                    'Gospeed * Yesterday, 19.00',
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                ],
+              _output,
+              style: const TextStyle(
+                fontSize: 48.0,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget notification2(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        print('Notification tapped');
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            Image.network(
-              'https://static.vecteezy.com/system/resources/previews/007/816/882/non_2x/tv-pixel-art-illustration-design-for-game-development-free-vector.jpg',
-              width: 50,
-              height: 50,
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Cyber Monday Is Here!',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    'Promo Khusus Buat Kamu! Buruan Pakai :D',
-                    style: TextStyle(fontSize: 13),
-                  ),
-                  Text(
-                    'Gospeed * Yesterday, 19.00',
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget notification3(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        print('Notification tapped');
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            Image.network(
-              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIRrAwLTf9PtbOjhh70p9kaz2b9ofvGVlBXg&usqp=CAU',
-              width: 50,
-              height: 50,
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Langsung Cek Disini!',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    'Hei Fallen, Ada Yang Baru Untuk Mu!',
-                    style: TextStyle(fontSize: 13),
-                  ),
-                  Text(
-                    'Gospeed * Yesterday, 19.00',
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget markAllRead(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        print('Mark all as read');
-      },
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(15),
-        margin: EdgeInsets.all(8),
-        child: Center(
-          child: Text(
-            'Mark all as read',
-            style: TextStyle(color: Colors.blue, fontSize: 10),
           ),
-        ),
+          Container(
+            // Container baru untuk menampilkan angka yang dimasukkan saat ini
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+            child: Text(
+              _currentNumber,
+              style: const TextStyle(
+                fontSize: 24.0,
+              ),
+            ),
+          ),
+          const Expanded(
+            child: Divider(),
+          ),
+          Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  _buildButton("7", 100, const Color.fromARGB(255, 94, 209, 224)),
+                  _buildButton("8", 100, const Color.fromARGB(255, 94, 209, 224)),
+                  _buildButton("9", 100, const Color.fromARGB(255, 94, 209, 224)),
+                  _buildButton("/", 100, const Color.fromARGB(109, 24, 134, 189)),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  _buildButton("4", 100, const Color.fromARGB(255, 94, 209, 224)),
+                  _buildButton("5", 100, const Color.fromARGB(255, 94, 209, 224)),
+                  _buildButton("6", 100, const Color.fromARGB(255, 94, 209, 224)),
+                  _buildButton("x", 100, const Color.fromARGB(109, 24, 134, 189)),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  _buildButton("1", 100, const Color.fromARGB(255, 94, 209, 224)),
+                  _buildButton("2", 100, const Color.fromARGB(255, 94, 209, 224)),
+                  _buildButton("3", 100, const Color.fromARGB(255, 94, 209, 224)),
+                  _buildButton("-", 100, const Color.fromARGB(109, 24, 134, 189)),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  _buildButton("C", 100, const Color.fromARGB(255, 18, 141, 235)),
+                  _buildButton("0", 100, const Color.fromARGB(255, 94, 209, 224)),
+                  _buildButton("+/-", 100, const Color.fromARGB(255, 94, 209, 224)),
+                  _buildButton("+", 100, const Color.fromARGB(109, 24, 134, 189)),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  _buildButton("%", 100, const Color.fromARGB(255, 94, 209, 224)),
+                  _buildButton("=", 100, const Color.fromARGB(109, 24, 134, 189)),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
